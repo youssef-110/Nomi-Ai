@@ -27,7 +27,7 @@ Nomi AI is a privacy-first AI learning assistant designed for students in emergi
 ### Setup
 
 ```bash
-git clone https://github.com/<your-username>/nomi-ai.git
+git clone https://github.com/youssef-110/nomi-ai.git
 cd nomi-ai
 npm install
 ```
