@@ -1,3 +1,4 @@
+/// <reference types="node" />
 // Server-side chat endpoint. The Groq key lives only here (GROQ_API_KEY), never in the
 // browser bundle. The system prompt is fixed on the server, so the endpoint cannot be
 // used as a general-purpose LLM proxy.
