@@ -1,15 +1,7 @@
-export const SUBJECTS = [
-  'Mathematics',
-  'Science',
-  'History',
-  'Literature',
-  'Programming',
-  'Languages',
-  'Geography',
-  'General Knowledge',
-] as const
+import { SUBJECTS, type Subject } from '../lib/subjects'
 
-export type Subject = (typeof SUBJECTS)[number]
+export { SUBJECTS, type Subject }
+
 
 interface Props {
   selected: Subject

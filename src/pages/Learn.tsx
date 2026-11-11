@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Send, RotateCcw, Menu, X } from 'lucide-react'
-import { groq, MODEL, buildSystemPrompt } from '../lib/groq'
 import ChatMessage, { type Message } from '../components/ChatMessage'
 import SubjectSelector, { type Subject } from '../components/SubjectSelector'
 import TypingIndicator from '../components/TypingIndicator'
@@ -40,18 +39,21 @@ export default function Learn() {
     setLoading(true)
 
     try {
-      const completion = await groq.chat.completions.create({
-        model: MODEL,
-        messages: [
-          { role: 'system', content: buildSystemPrompt(subject) },
-          ...history
+      // The Groq key stays on the server: api/chat.ts adds it and the system prompt.
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          subject,
+          messages: history
             .filter((m) => m !== WELCOME)
+            .slice(-30)
             .map((m) => ({ role: m.role, content: m.content })),
-        ],
+        }),
       })
-      const reply =
-        completion.choices[0]?.message?.content ??
-        "Hmm, I didn't catch that — could you try asking again? 📚"
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`)
+      const reply: string = data.reply
       setMessages((prev) => [...prev, { role: 'assistant', content: reply }])
     } catch (err) {
       console.error(err)
@@ -59,8 +61,7 @@ export default function Learn() {
         ...prev,
         {
           role: 'assistant',
-          content:
-            "⚠️ I couldn't reach my brain right now. Please check that your Groq API key is set in the .env file (VITE_GROQ_API_KEY) and try again.",
+          content: `⚠️ I couldn't answer just now (${err instanceof Error ? err.message : 'network error'}). Please try again.`,
         },
       ])
     } finally {
