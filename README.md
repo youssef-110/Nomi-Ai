@@ -4,7 +4,7 @@ Nomi AI is a privacy-first AI learning assistant designed for students in emergi
 
 ## Features
 
-- **AI Tutor Chat** — Ask questions across subjects like Mathematics, Science, History, Literature, Programming, Languages, Geography, and General Knowledge. Powered by Groq's `llama-3.3-70b-versatile` model, with a system prompt that keeps responses on-topic, encouraging, and easy to follow for second-language learners.
+- **AI Tutor Chat** — Ask questions across subjects like Mathematics, Science, History, Literature, Programming, Languages, Geography, and General Knowledge. Powered by Groq's `openai/gpt-oss-120b` model (set `VITE_GROQ_MODEL` to change it), with a system prompt that keeps responses on-topic, encouraging, and easy to follow for second-language learners.
 - **Teacher Dashboard** — A view for educators to see student activity and popular topics.
 - **Privacy-first positioning** — No accounts, no tracking, no ad-based data use.
 

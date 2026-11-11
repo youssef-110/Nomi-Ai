@@ -5,7 +5,8 @@ export const groq = new Groq({
   dangerouslyAllowBrowser: true,
 })
 
-export const MODEL = 'llama-3.3-70b-versatile'
+// Override with VITE_GROQ_MODEL; Groq retires models, see console.groq.com/docs/models.
+export const MODEL = import.meta.env.VITE_GROQ_MODEL || 'openai/gpt-oss-120b'
 
 export function buildSystemPrompt(subject: string): string {
   return `You are Nomi, an AI learning assistant designed for students in emerging markets. You are knowledgeable, patient, encouraging, and clear in your explanations.
