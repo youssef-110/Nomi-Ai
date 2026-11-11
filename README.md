@@ -2,7 +2,7 @@
 
 Nomi AI is a privacy-first AI learning assistant designed for students in emerging markets — patient, encouraging, and lightweight enough to run on low-end devices and unreliable connections. It was built as a project for a university Startup Management course, framed around the UN Sustainable Development Goals (SDG 4, 5, 7, and 12).
 
-**Live site:** https://nomi-ai-hex8.vercel.app
+**Live site:** https://nomi-ai-two.vercel.app
 
 ## Features
 
