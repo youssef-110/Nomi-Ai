@@ -26,26 +26,39 @@ function devApi(mode: string): Plugin {
         if (req.method !== 'POST') return reject(405, 'POST only.')
         if (!req.headers['content-type']?.startsWith('application/json')) return reject(415, 'Send JSON.')
         const origin = req.headers.origin
-        if (origin && new URL(origin).host !== req.headers.host) return reject(403, 'Cross-origin request refused.')
-
-        const chunks: Buffer[] = []
-        let size = 0
-        for await (const chunk of req) {
-          size += (chunk as Buffer).length
-          if (size > 256 * 1024) return reject(413, 'Request too large.')
-          chunks.push(chunk as Buffer)
+        if (origin) {
+          let host: string
+          try {
+            host = new URL(origin).host
+          } catch {
+            return reject(403, 'Bad origin.')
+          }
+          if (host !== req.headers.host) return reject(403, 'Cross-origin request refused.')
         }
-        const { POST } = await server.ssrLoadModule('/api/chat.ts')
-        const response: Response = await POST(
-          new Request('http://localhost/api/chat', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json', 'x-real-ip': req.socket.remoteAddress ?? 'local' },
-            body: Buffer.concat(chunks),
-          }),
-        )
-        res.statusCode = response.status
-        res.setHeader('content-type', 'application/json')
-        res.end(await response.text())
+
+        try {
+          const chunks: Buffer[] = []
+          let size = 0
+          for await (const chunk of req) {
+            size += (chunk as Buffer).length
+            if (size > 256 * 1024) return reject(413, 'Request too large.')
+            chunks.push(chunk as Buffer)
+          }
+          const { POST } = await server.ssrLoadModule('/api/chat.ts')
+          const response: Response = await POST(
+            new Request('http://localhost/api/chat', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json', 'x-real-ip': req.socket.remoteAddress ?? 'local' },
+              body: Buffer.concat(chunks),
+            }),
+          )
+          res.statusCode = response.status
+          res.setHeader('content-type', 'application/json')
+          res.end(await response.text())
+        } catch (err) {
+          server.config.logger.error(`api/chat failed: ${err instanceof Error ? err.message : err}`)
+          if (!res.headersSent) reject(500, 'The chat endpoint failed.')
+        }
       })
     },
   }
